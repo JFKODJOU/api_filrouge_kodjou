@@ -13,7 +13,6 @@ public class VelibUser {
         this.mdp =  mdp;
     }
 
-
     //To obtain identifier of user
     public String getLogin() {
         return login;

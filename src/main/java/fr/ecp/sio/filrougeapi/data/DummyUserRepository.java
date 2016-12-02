@@ -1,9 +1,13 @@
-
 package fr.ecp.sio.filrougeapi.data;
 
-        import java.io.IOException;
-        import java.util.ArrayList;
-        import java.util.List;
+import fr.ecp.sio.filrougeapi.model.Location;
+import fr.ecp.sio.filrougeapi.model.Station;
+import fr.ecp.sio.filrougeapi.model.VelibUser;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A UserRepository to simulate a user database

@@ -27,7 +27,7 @@ public class UsersServlet extends ApiServlet {
             //  The user parameters are verified in the "DummyDataRepository" through the "UserRepository"
             // If user is verified, the token is sending to the base class
             //TODO: A real users database can be implement
-            login = req.getParameter("log");;
+            login = req.getParameter("log");
             pwd = req.getParameter("pwd");
             List<VelibUser> users =  DataUtils.getUserRepository().getVelibUser();
             for (VelibUser vu:users){
