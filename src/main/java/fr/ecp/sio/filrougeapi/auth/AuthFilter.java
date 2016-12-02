@@ -1,5 +1,8 @@
 package fr.ecp.sio.filrougeapi.auth;
 
+import fr.ecp.sio.filrougeapi.data.DataUtils;
+import fr.ecp.sio.filrougeapi.endpoints.UsersServlet;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,13 +23,13 @@ public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         // Let's inspect HTTP headers of the request.
-        String auth = ((HttpServletRequest) servletRequest).getHeader("Authorization");
-        //TODO: add an authentication mechanism here
-        if (auth == null) {
-            // If authentication or authorization fails, send an HTTP error response and do NOT call filterChain.doFilter().
-            ((HttpServletResponse) servletResponse).sendError(401, "Auth required");
+        String auth = ((HttpServletRequest) servletRequest).getHeader("key");
+        if (!auth.equals(DataUtils.getToken())) {
+            //If authentication or authorization fails, send an HTTP error response and do NOT call filterChain.doFilter().
+            ((HttpServletResponse) servletResponse).sendError(401, "You have not authorization!");
             return;
         }
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
@@ -34,3 +37,8 @@ public class AuthFilter implements Filter {
     public void destroy() { }
 
 }
+/*
+if(servletRequest instanceof UsersServlet){
+        filterChain.doFilter(servletRequest, servletResponse);
+
+        }else {*/

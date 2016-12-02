@@ -12,15 +12,19 @@ import java.util.List;
 public interface DataRepository {
 
     /*
-        Get a station by id.
+        Get a station by id or by name
         Returns null if the station is not found.
      */
-    Station getStation(long id) throws IOException;
+    Station getStationByID(long id) throws IOException;
+    List<Station> getStationByName(String name) throws IOException;
+
 
     /*
         Get a list of all stations.
-        TODO: Add optional parameters to filter the list (or create other methods)
+        2nd method to get a list of all stations but limited by limit and offset args
      */
     List<Station> getStations() throws IOException;
+
+    List<Station> getStations(int limit, int offset) throws IOException;
 
 }

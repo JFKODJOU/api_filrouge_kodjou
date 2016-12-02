@@ -21,6 +21,7 @@ public class ApiServlet extends HttpServlet {
         Gson gson = new GsonBuilder().create();
         // The HttpServletResponse exposes a getWriter() method to write to the output stream.
         gson.toJson(data, resp.getWriter());
+
     }
 
 }
