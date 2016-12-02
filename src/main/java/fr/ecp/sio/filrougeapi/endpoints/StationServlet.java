@@ -5,6 +5,7 @@ import fr.ecp.sio.filrougeapi.data.DataUtils;
 import fr.ecp.sio.filrougeapi.model.Station;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -14,25 +15,31 @@ import java.io.IOException;
  * This servlet receives requests to URLs /stations/{id}.
  */
 public class StationServlet extends ApiServlet {
-
-    // HttpServlet has protected doXxx() methods that correspond to HTTP verbs (GET, POST...).
-    // These methods receive objects to represent both the request (to inspect or read from) and the response (to write to).
-    // Default implementation sends a 405 error, so we must override doGet() to support GET requests and NOT call super implementation.
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        DataRepository rep = DataUtils.getRepository();
         long id;
+
         try {
             // We get the id of the station from the path of the URL of the request, removing the leading "/".
             id = Long.parseLong(req.getPathInfo().substring(1));
+
+            //TODO: Write a condition to know what you find in the URL (like: /stations?id=xxx). Actually, this proposition only operate with research by name.
+            /*if (req.getParameter("id") != null){
+                id = Long.parseLong(req.getParameter("id"));
+                //id = Long.parseLong(req.getPathInfo().substring(1));
+            } else{id = 0;}*/
+
         } catch (NumberFormatException ex) {
             // Path is not a valid id, this is a "client" error (4XX code).
             resp.sendError(400, "Invalid station id");
             return;
         }
 
-        DataRepository rep = DataUtils.getRepository();
-        Station station = rep.getStation(id);
+
+        Station station = rep.getStationByID(id);
+
 
         if (station == null) {
             // A station was not found with this id, send a 404 error.
@@ -43,5 +50,6 @@ public class StationServlet extends ApiServlet {
         sendResponse(station, resp);
 
     }
+
 
 }

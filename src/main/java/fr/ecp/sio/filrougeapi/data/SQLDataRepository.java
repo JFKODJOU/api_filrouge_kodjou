@@ -48,17 +48,18 @@ public class SQLDataRepository implements DataRepository {
         return s;
     }
 
+    //Method to make search in the database by ID of the station
     @Override
-    public Station getStation(long id) throws IOException {
+    public Station getStationByID(long id) throws IOException {
         // This syntax is a "try-with-resources".
         // We can instantiate in the brackets classes that implements AutoClosable (= have a close() method).
         // These 'resources' will have their close() method called at the end of the block, even in case of error.
         try (
-            // Open a connection to the database.
-            Connection c = openConnection();
-            // Prepare a statement, with '?' placeholders.
-            // Prepared statements are efficiently cached and allow a safe handling of placeholders.
-            PreparedStatement stmt = c.prepareStatement("SELECT * FROM stations WHERE id = ?");
+                // Open a connection to the database.
+                Connection c = openConnection();
+                // Prepare a statement, with '?' placeholders.
+                // Prepared statements are efficiently cached and allow a safe handling of placeholders.
+                PreparedStatement stmt = c.prepareStatement("SELECT * FROM stations WHERE id = ?");
         ) {
             // Provide values for placeholders (indexes start at 1 is SQL!)
             stmt.setLong(1, id);
@@ -74,13 +75,69 @@ public class SQLDataRepository implements DataRepository {
         }
     }
 
+    //Method to make search in the database by name of the station
     @Override
+    public List<Station> getStationByName(String name) throws IOException {
+        List<Station> stationsResults = new ArrayList<>();
+
+        // This syntax is a "try-with-resources".
+        // We can instantiate in the brackets classes that implements AutoClosable (= have a close() method).
+        // These 'resources' will have their close() method called at the end of the block, even in case of error.
+        try (
+                // Open a connection to the database.
+                Connection c = openConnection();
+                // Prepare a statement, with '?' placeholders.
+                // Prepared statements are efficiently cached and allow a safe handling of placeholders.
+                PreparedStatement stmt = c.prepareStatement("SELECT * FROM stations WHERE name LIKE ?");
+        ) {
+            // Provide values for placeholders (indexes start at 1 is SQL!)
+            stmt.setString(1, "%"+name+"%");
+            // The statement is ready, we can execute it and get the result.
+            try (ResultSet rs = stmt.executeQuery()) {
+                // ResultSet works like an iterator: we call next() to position to the next line, then read with other methods.
+                while (rs.next())
+                    stationsResults.add(createStation(rs));
+            }
+        } catch (SQLException e) {
+            // The DataRepository interface only allows exceptions of type IOException to be thrown, so we encapsulate the SQLException.
+            throw new IOException("Database error", e);
+        }
+
+        return stationsResults;
+
+    }
+
+
+    @Override//Method to get all stations of the database
     public List<Station> getStations() throws IOException {
         try (
-            Connection c = openConnection();
-            PreparedStatement stmt = c.prepareStatement("SELECT * FROM stations");
-            ResultSet rs = stmt.executeQuery();
+                Connection c = openConnection();
+                PreparedStatement stmt = c.prepareStatement("SELECT * FROM stations");
+                ResultSet rs = stmt.executeQuery();
         ) {
+            List<Station> list = new ArrayList<>();
+            // Iterate over all the lines of the result.
+            while (rs.next()) {
+                list.add(createStation(rs));
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new IOException("Database error", e);
+        }
+    }
+
+    @Override//Method to get all stations of the database
+    public List<Station> getStations(int limit, int offset) throws IOException {
+        try (
+                Connection c = openConnection();
+                PreparedStatement stmt = c.prepareStatement("SELECT * FROM stations LIMIT ? OFFSET ?");
+        ) {
+
+            stmt.setInt(1, limit);
+            stmt.setInt(2, offset);
+
+            ResultSet rs = stmt.executeQuery();
+
             List<Station> list = new ArrayList<>();
             // Iterate over all the lines of the result.
             while (rs.next()) {

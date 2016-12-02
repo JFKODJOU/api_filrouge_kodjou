@@ -8,7 +8,8 @@ import java.util.List;
 
 /**
  * A DataRepository that returns fake data.
- */
+ * Just for testing
+ *//*
 public class DummyDataRepository implements DataRepository {
 
     @Override
@@ -32,4 +33,4 @@ public class DummyDataRepository implements DataRepository {
         return Arrays.asList(getStation(25));
     }
 
-}
+}*/
